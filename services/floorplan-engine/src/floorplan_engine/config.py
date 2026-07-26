@@ -12,3 +12,5 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 TEST_PDF = INPUT_DIR / "GC_136_clear.pdf"
 
 PNG_FILE = OUTPUT_DIR / "page_001.png"
+
+CROPPED_FILE = OUTPUT_DIR / "page_001_cropped.png"
