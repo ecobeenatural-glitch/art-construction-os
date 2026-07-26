@@ -1,15 +1,11 @@
 [project]
 name = "art-construction-os"
 version = "0.1.0"
-description = "Add your description here"
+description = "ART Construction OS"
 readme = "README.md"
 requires-python = ">=3.13"
+
 dependencies = [
     "opencv-python>=5.0.0.93",
     "pymupdf>=1.28.0",
-]
-
-[tool.uv.workspace]
-members = [
-    "services/art-converter",
 ]

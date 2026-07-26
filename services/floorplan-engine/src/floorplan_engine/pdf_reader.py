@@ -1,18 +1,36 @@
 from pathlib import Path
-import fitz  # PyMuPDF
+import fitz
 
 
-def pdf_info(pdf_path: Path) -> None:
-    """Print basic information about a PDF file."""
+class PDFReader:
+    """Reads PDF floor plans and exports pages as images."""
 
-    doc = fitz.open(pdf_path)
+    def __init__(self, pdf_path: Path):
+        self.pdf_path = pdf_path
+        self.doc = fitz.open(pdf_path)
 
-    print(f"File: {pdf_path.name}")
-    print(f"Pages: {doc.page_count}")
+    @property
+    def page_count(self) -> int:
+        return self.doc.page_count
 
-    doc.close()
+    def export_page(
+        self,
+        page_number: int,
+        output_path: Path,
+        dpi: int = 300,
+    ) -> Path:
+        page = self.doc.load_page(page_number)
 
+        zoom = dpi / 72
+        matrix = fitz.Matrix(zoom, zoom)
 
-if __name__ == "__main__":
-    pdf = Path("samples/input/GC_136_clear.pdf")
-    pdf_info(pdf)
+        pix = page.get_pixmap(matrix=matrix)
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        pix.save(output_path)
+
+        return output_path
+
+    def close(self):
+        self.doc.close()
