@@ -1,9 +1,23 @@
 from pdf_reader import PDFReader
 from image_analyzer import ImageAnalyzer
-from config import TEST_PDF, OUTPUT_DIR
 from image_cropper import ImageCropper
-from config import TEST_PDF, OUTPUT_DIR, CROPPED_FILE
+from drawing_inspector import DrawingInspector
+from threshold import ThresholdProcessor
+from morphology import MorphologyProcessor
 
+
+from config import (
+    TEST_PDF,
+    OUTPUT_DIR,
+    CROPPED_FILE,
+    BINARY_FILE,
+    CLEAN_FILE,
+)
+
+from core.context import ProcessingContext
+from core.pipeline import Pipeline
+from steps.pdf_export_step import PDFExportStep
+from steps.crop_step import CropStep
 
 
 OUTPUT = OUTPUT_DIR / "page_001.png"
@@ -11,27 +25,43 @@ OUTPUT = OUTPUT_DIR / "page_001.png"
 
 def main():
 
-    reader = PDFReader(TEST_PDF)
+    # -----------------------------
+    # Pipeline
+    # -----------------------------
+    context = ProcessingContext()
 
-    print(f"Pages: {reader.page_count}")
+    pipeline = Pipeline()
 
-    reader.export_page(
-        page_number=0,
-        output_path=OUTPUT,
-        dpi=300,
+    pipeline.add(
+        PDFExportStep(
+            pdf_path=TEST_PDF,
+            output_path=OUTPUT,
+            dpi=300,
+        )
     )
 
-    reader.close()
+    pipeline.add(
+        CropStep(
+            output_path=CROPPED_FILE,
+        )
+    )
 
-    print(f"Saved -> {OUTPUT}")
+    pipeline.run(context)
 
-    analyzer = ImageAnalyzer(OUTPUT)
-
+    # -----------------------------
+    # Existing processing
+    # -----------------------------
+    analyzer = ImageAnalyzer(context.page_image)
     analyzer.info()
 
-    cropper = ImageCropper(OUTPUT)
+    inspector = DrawingInspector(context.cropped_image)
+    inspector.report()
 
-    cropper.crop_white_margins(CROPPED_FILE)
+    threshold = ThresholdProcessor(context.cropped_image)
+    threshold.otsu(BINARY_FILE)
+
+    morph = MorphologyProcessor(BINARY_FILE)
+    morph.clean(CLEAN_FILE)
 
 
 if __name__ == "__main__":

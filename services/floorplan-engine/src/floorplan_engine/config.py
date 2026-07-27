@@ -14,3 +14,7 @@ TEST_PDF = INPUT_DIR / "GC_136_clear.pdf"
 PNG_FILE = OUTPUT_DIR / "page_001.png"
 
 CROPPED_FILE = OUTPUT_DIR / "page_001_cropped.png"
+
+BINARY_FILE = OUTPUT_DIR / "page_001_binary.png"
+
+CLEAN_FILE = OUTPUT_DIR / "page_001_clean.png"
