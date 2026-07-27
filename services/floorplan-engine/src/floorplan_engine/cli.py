@@ -6,6 +6,9 @@ from threshold import ThresholdProcessor
 from morphology import MorphologyProcessor
 
 
+
+
+
 from config import (
     TEST_PDF,
     OUTPUT_DIR,
@@ -18,6 +21,9 @@ from core.context import ProcessingContext
 from core.pipeline import Pipeline
 from steps.pdf_export_step import PDFExportStep
 from steps.crop_step import CropStep
+from steps.inspector_step import InspectorStep
+from steps.threshold_step import ThresholdStep
+from steps.morphology_step import MorphologyStep
 
 
 OUTPUT = OUTPUT_DIR / "page_001.png"
@@ -46,6 +52,22 @@ def main():
         )
     )
 
+    pipeline.add(
+        InspectorStep()
+    )
+
+    pipeline.add(
+        ThresholdStep(
+            output_path=BINARY_FILE,
+        )
+    )
+
+    pipeline.add(
+        MorphologyStep(
+            output_path=CLEAN_FILE,
+        )
+    )
+
     pipeline.run(context)
 
     # -----------------------------
@@ -54,14 +76,6 @@ def main():
     analyzer = ImageAnalyzer(context.page_image)
     analyzer.info()
 
-    inspector = DrawingInspector(context.cropped_image)
-    inspector.report()
-
-    threshold = ThresholdProcessor(context.cropped_image)
-    threshold.otsu(BINARY_FILE)
-
-    morph = MorphologyProcessor(BINARY_FILE)
-    morph.clean(CLEAN_FILE)
 
 
 if __name__ == "__main__":
