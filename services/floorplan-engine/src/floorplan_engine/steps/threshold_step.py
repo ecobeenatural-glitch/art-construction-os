@@ -1,5 +1,5 @@
 from core.base_step import BaseStep
-from threshold import ThresholdProcessor
+from processors.threshold import ThresholdProcessor
 
 
 class ThresholdStep(BaseStep):

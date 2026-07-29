@@ -11,10 +11,28 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TEST_PDF = INPUT_DIR / "GC_136_clear.pdf"
 
-PNG_FILE = OUTPUT_DIR / "page_001.png"
 
-CROPPED_FILE = OUTPUT_DIR / "page_001_cropped.png"
 
-BINARY_FILE = OUTPUT_DIR / "page_001_binary.png"
 
-CLEAN_FILE = OUTPUT_DIR / "page_001_clean.png"
+DEBUG_DIR = OUTPUT_DIR / "debug"
+
+DEBUG_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+EXPORT_FILE = DEBUG_DIR / "01_export.png"
+
+CROP_FILE = DEBUG_DIR / "02_crop.png"
+
+BINARY_FILE = DEBUG_DIR / "03_binary.png"
+
+CLEAN_FILE = DEBUG_DIR / "04_clean.png"
+
+COMPONENTS_FILE = DEBUG_DIR / "05_components.png"
+
+WALLS_FILE = DEBUG_DIR / "06_walls.png"
+
+MIN_COMPONENT_AREA = 500
+
+COMPONENTS_CSV = DEBUG_DIR / "components.csv"

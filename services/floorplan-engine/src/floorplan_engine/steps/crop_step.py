@@ -1,5 +1,5 @@
 from core.base_step import BaseStep
-from image_cropper import ImageCropper
+from processors.image_cropper import ImageCropper
 
 
 class CropStep(BaseStep):

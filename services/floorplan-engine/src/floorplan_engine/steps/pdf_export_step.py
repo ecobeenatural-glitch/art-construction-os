@@ -1,5 +1,5 @@
 from core.base_step import BaseStep
-from pdf_reader import PDFReader
+from processors.pdf_reader import PDFReader
 
 
 class PDFExportStep(BaseStep):

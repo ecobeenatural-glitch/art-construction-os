@@ -1,5 +1,5 @@
 from core.base_step import BaseStep
-from morphology import MorphologyProcessor
+from processors.morphology import MorphologyProcessor
 
 
 class MorphologyStep(BaseStep):
