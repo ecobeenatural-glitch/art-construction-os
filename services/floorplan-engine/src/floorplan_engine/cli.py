@@ -1,14 +1,5 @@
-from processors.pdf_reader import PDFReader
-#from image_analyzer import ImageAnalyzer
-from processors.image_cropper import ImageCropper
-#from drawing_inspector import DrawingInspector
-from processors.threshold import ThresholdProcessor
-from processors.morphology import MorphologyProcessor
 
-
-
-
-from config import (
+from floorplan_engine.config import (
     TEST_PDF,
     EXPORT_FILE,
     CROP_FILE,
@@ -17,17 +8,19 @@ from config import (
     COMPONENTS_FILE,
     MIN_COMPONENT_AREA,
     COMPONENTS_CSV,
+    DEBUG_COMPONENT_IDS,
 )
 
-from core.context import ProcessingContext
-from core.pipeline import Pipeline
-from steps.pdf_export_step import PDFExportStep
-from steps.crop_step import CropStep
-#from steps.inspector_step import InspectorStep
-from steps.threshold_step import ThresholdStep
-from steps.morphology_step import MorphologyStep
-from processors.wall_detector import WallDetector
-from analyzers.component_analyzer import ComponentAnalyzer
+from floorplan_engine.core.context import ProcessingContext
+from floorplan_engine.core.pipeline import Pipeline
+from floorplan_engine.steps.pdf_export_step import PDFExportStep
+from floorplan_engine.steps.crop_step import CropStep
+from floorplan_engine.steps.threshold_step import ThresholdStep
+from floorplan_engine.steps.morphology_step import MorphologyStep
+from floorplan_engine.processors.wall_detector import WallDetector
+from floorplan_engine.analyzers.component_analyzer import ComponentAnalyzer
+from floorplan_engine.analyzers.wall_classifier import WallClassifier
+from floorplan_engine.visualizers.component_visualizer import ComponentVisualizer
 
 
 OUTPUT = EXPORT_FILE
@@ -72,23 +65,81 @@ def main():
     pipeline.run(context)
 
     # -----------------------------
-    # Existing processing
+    # Component Detection
     # -----------------------------
-    #analyzer = ImageAnalyzer(context.page_image)
-    #analyzer.info()
-
     detector = WallDetector(CLEAN_FILE)
+
     detector.load()
+
     detector.find_components()
 
-    analyzer = ComponentAnalyzer(
-        detector.labels,
+    # -----------------------------
+    # Debug visualization
+    # -----------------------------
+    visualizer = ComponentVisualizer(
+        detector.image,
         detector.stats,
     )
 
+    visualizer.draw_ids(DEBUG_COMPONENT_IDS)
+
+    # -----------------------------
+    # Component analysis
+    # -----------------------------
+    analyzer = ComponentAnalyzer(detector)
+
+    components = analyzer.build_components()
+
+    print()
+
+    print("===== CONTOUR TEST =====")
+
+    for c in components[:5]:
+
+        if c.contour is None:
+            print(f"{c.id}: contour=None")
+
+        else:
+            print(
+                f"{c.id}: points={len(c.contour)}"
+            )
+
+
+    print(f"\nComponents: {len(components)}")
+    print(components[0])
+
     analyzer.export_csv(COMPONENTS_CSV)
 
+    # -----------------------------
+    # Classification
+    # -----------------------------
+    #from analyzers.wall_classifier import WallClassifier
 
+    classifier = WallClassifier(components)
+
+    classifier.classify()
+
+    # -----------------------------
+    # Statistics
+    # -----------------------------
+    walls = sum(1 for c in components if c.cls == "WALL")
+    others = sum(1 for c in components if c.cls == "OTHER")
+
+    print("\n==============================")
+    print("CLASSIFICATION")
+    print("==============================")
+    print(f"WALLS : {walls}")
+    print(f"OTHERS: {others}")
+
+    print("\nDetected WALL components:\n")
+
+    for c in components:
+        if c.cls == "WALL":
+            print(c)
+
+    # -----------------------------
+    # Debug image
+    # -----------------------------
     detector.filter_components(
         min_area=MIN_COMPONENT_AREA,
         output_path=COMPONENTS_FILE,

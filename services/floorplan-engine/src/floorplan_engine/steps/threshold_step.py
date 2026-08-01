@@ -1,5 +1,5 @@
-from core.base_step import BaseStep
-from processors.threshold import ThresholdProcessor
+from floorplan_engine.core.base_step import BaseStep
+from floorplan_engine.processors.threshold import ThresholdProcessor
 
 
 class ThresholdStep(BaseStep):

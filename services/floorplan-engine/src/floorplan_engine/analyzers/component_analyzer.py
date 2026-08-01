@@ -1,12 +1,47 @@
 import csv
 import cv2
+from floorplan_engine.models import Component
 
 
 class ComponentAnalyzer:
 
-    def __init__(self, labels, stats):
-        self.labels = labels
-        self.stats = stats
+    def __init__(self, detector):
+        self.detector = detector
+        self.labels = detector.labels
+        self.stats = detector.stats
+
+    def build_components(self):
+
+        components = []
+
+        for label in range(1, len(self.stats)):
+
+            left = int(self.stats[label][0])
+            top = int(self.stats[label][1])
+            width = int(self.stats[label][2])
+            height = int(self.stats[label][3])
+            area = int(self.stats[label][4])
+
+            aspect = width / height if height else 0
+            fill = area / (width * height) if width * height else 0
+
+
+            contour = self.detector.find_component_contour(label)
+            components.append(
+                Component(
+                    id=label,
+                    area=area,
+                    left=left,
+                    top=top,
+                    width=width,
+                    height=height,
+                    aspect_ratio=aspect,
+                    fill_ratio=fill,
+                    contour=contour,
+                )
+            )
+
+        return components    
 
     def export_csv(self, csv_path):
 

@@ -36,3 +36,5 @@ WALLS_FILE = DEBUG_DIR / "06_walls.png"
 MIN_COMPONENT_AREA = 500
 
 COMPONENTS_CSV = DEBUG_DIR / "components.csv"
+
+DEBUG_COMPONENT_IDS = DEBUG_DIR / "06_component_ids.png"

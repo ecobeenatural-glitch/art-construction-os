@@ -1,5 +1,5 @@
-from core.base_step import BaseStep
-from drawing_inspector import DrawingInspector
+from floorplan_engine.core.base_step import BaseStep
+from floorplan_engine.drawing_inspector import DrawingInspector
 
 
 class InspectorStep(BaseStep):

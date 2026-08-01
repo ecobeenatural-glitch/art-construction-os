@@ -1,5 +1,5 @@
-from core.base_step import BaseStep
-from processors.morphology import MorphologyProcessor
+from floorplan_engine.core.base_step import BaseStep
+from floorplan_engine.processors.morphology import MorphologyProcessor
 
 
 class MorphologyStep(BaseStep):

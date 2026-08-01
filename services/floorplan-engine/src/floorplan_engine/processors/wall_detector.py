@@ -55,4 +55,49 @@ class WallDetector:
         print(f"Large components: {kept}")
         print(f"Saved -> {output_path}") 
 
+    def find_contour(self, component_id):
+
+        import numpy as np
+        import cv2
+
+        mask = np.uint8(self.labels == component_id) * 255
+
+        contours, _ = cv2.findContours(
+            mask,
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE,
+        )
+
+        if not contours:
+            return None
+
+        return max(contours, key=cv2.contourArea)   
+
+    def extract_component_mask(self, label):
+
+        import numpy as np
+
+        mask = np.zeros_like(self.labels, dtype="uint8")
+
+        mask[self.labels == label] = 255
+
+        return mask
+
+    def find_component_contour(self, label):
+
+        import cv2
+
+        mask = self.extract_component_mask(label)
+
+        contours, _ = cv2.findContours(
+            mask,
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE,
+        )
+
+        if len(contours) == 0:
+            return None
+
+        return max(contours, key=cv2.contourArea)
+
      

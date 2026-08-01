@@ -1,5 +1,6 @@
-from core.base_step import BaseStep
-from processors.image_cropper import ImageCropper
+#from core.base_step import BaseStep
+from floorplan_engine.core.base_step import BaseStep
+from floorplan_engine.processors.image_cropper import ImageCropper
 
 
 class CropStep(BaseStep):

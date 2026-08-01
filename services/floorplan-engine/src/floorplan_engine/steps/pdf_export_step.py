@@ -1,5 +1,6 @@
-from core.base_step import BaseStep
-from processors.pdf_reader import PDFReader
+#from core.base_step import BaseStep
+from floorplan_engine.core.base_step import BaseStep
+from floorplan_engine.processors.pdf_reader import PDFReader
 
 
 class PDFExportStep(BaseStep):
